@@ -2,7 +2,16 @@ import { Router } from "express";
 
 import { agregarCampo, buscarCampo, editarCampo, eliminarCampo, listarCampos,mostrarTrazado } from '../business_logic/controllers/campos_controller';
 import { agregarRol, buscarRol, cancelarEditarRol, editarRol, eliminarRol, listarRoles, restaurarRol } from "../business_logic/controllers/roles_controller";
-import { agregarCultivo, buscarCultivo, cancelarEditarCultivo, editarCultivo, eliminarCultivo, listarCultivos, restaurarCultivo } from "../business_logic/controllers/cultivos_controller";
+import {
+    agregarCultivo,
+    buscarCultivo,
+    cancelarEditarCultivo,
+    editarCultivo,
+    eliminarCultivo,
+    listaCultivoApi,
+    listarCultivos,
+    restaurarCultivo
+} from "../business_logic/controllers/cultivos_controller";
 import { agregarCultivo_salida, buscarCultivo_salida, listarCultivo_salidas } from "../business_logic/controllers/cultivos_salida_controller";
 import { agregarEstado, buscarEstado, cancelarEditarEstado, editarEstado, eliminarEstado, listarEstados, restaurarEstado } from "../business_logic/controllers/estados_controller";
 import { agregarRegistro, buscarRegistro, eliminarRegistro, listarRegistros } from "../business_logic/controllers/registros_controller";
@@ -50,6 +59,7 @@ router.get('/cancelEditEstado', cancelarEditarEstado);
 router.get('/estados/restore/:id', restaurarEstado);
 
 //Rutas para cultivos
+router.get('/cultivosApi', listaCultivoApi);
 router.get('/cultivos', listarCultivos);
 router.get('/cultivos/:id', buscarCultivo);
 router.post('/cultivos/add', agregarCultivo);

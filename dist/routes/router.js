@@ -43,6 +43,7 @@ router.get('/estados/delete/:id', estados_controller_1.eliminarEstado);
 router.get('/cancelEditEstado', estados_controller_1.cancelarEditarEstado);
 router.get('/estados/restore/:id', estados_controller_1.restaurarEstado);
 //Rutas para cultivos
+router.get('/cultivosApi', cultivos_controller_1.listaCultivoApi);
 router.get('/cultivos', cultivos_controller_1.listarCultivos);
 router.get('/cultivos/:id', cultivos_controller_1.buscarCultivo);
 router.post('/cultivos/add', cultivos_controller_1.agregarCultivo);

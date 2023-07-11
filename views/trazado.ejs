@@ -174,6 +174,8 @@
 
       if(mListaCampo.length > 0)
       {
+
+        oDrawingManager.setMap(null)
         oPolygon = poligono
         oContainerAddCampo = document.getElementById("ContainerAddCampo");
         oContainerAddCampo.classList.remove("hideContainer");
@@ -562,6 +564,30 @@
 
           </div>
 
+          <div id="ContainerCultivoAdd" class="container_datos_cultivo hideContainerAddCultivo">
+
+            <form>
+              <label for="exampleFormControlSelect1" class="form-label">Example select</label>
+              <select class="form-select" id="ISelectCultipos" aria-label="Default select example">
+              </select>
+              <label for="html5-date-input" class="col-md-2 col-form-label">Date</label>
+              <div class="col-md-10" style="width: 100%">
+                <input class="form-control" style="width: 100%;" type="date" value="2021-06-18" id="html5-date-input" />
+              </div>
+              <br>
+
+              <button id="btnSaveCampo" class="btn btn-primary">
+                <span class="tf-icons bx bx-plus-circle"></span> AGREGAR CULTIVO</button>
+
+
+            </form>
+
+
+
+
+
+          </div>
+
 
 
         </div>
@@ -618,10 +644,9 @@
 
 
   <script>
-    let oBtnSaveCampo = document.getElementById("btnSaveCampo");
 
+    let oBtnSaveCampo = document.getElementById("btnSaveCampo");
     oBtnSaveCampo.onclick = function() {
-      // Aquí va el código que se ejecutará cuando se haga clic en el botón
       saveCampo()
     };
 
@@ -661,6 +686,8 @@
                   fillOpacity: 0.2,
                 });
                 bermudaTriangle.setMap(oMapaGoogle);
+                bermudaTriangle.addListener("click", showPolygon);
+
               }
 
             }
@@ -673,6 +700,35 @@
         }
       });
     }
+
+
+    function showPolygon(event)
+    {
+      var elemento = document.getElementById('ContainerCultivoAdd')
+      elemento.classList.remove('hideContainerAddCultivo');
+
+    }
+
+
+    function readAllCumplivos()
+    {
+
+      $.get('http://localhost:8000/cultivosApi', function(response)
+      {
+        // La respuesta exitosa de la API
+        console.log("********************* CCCCCCCCCCCC")
+        console.log(response);
+        // <option value="1">One</option>
+        
+      })
+              .fail(function(xhr, status, error) {
+                // Ocurrió un error al hacer la solicitud
+                console.error(error);
+              });
+
+    }
+
+    readAllCumplivos()
 
 
 
@@ -696,6 +752,25 @@
 
     .hideContainer{
       display: none;
+    }
+
+
+    .hideContainerAddCultivo{
+      display: none;
+    }
+
+    .container_datos_cultivo{
+      width: 15rem;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      margin-right: 1rem;
+      border-style: solid;
+      border-width: 0;
+      border-radius: 10px;
+      background-color: white;
+      position: absolute;
+      right: 0;
+      z-index: 99999;
     }
 
   </style>

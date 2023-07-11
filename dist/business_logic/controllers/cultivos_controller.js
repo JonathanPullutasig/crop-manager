@@ -9,8 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.restaurarCultivo = exports.cancelarEditarCultivo = exports.eliminarCultivo = exports.editarCultivo = exports.agregarCultivo = exports.buscarCultivo = exports.listarCultivos = void 0;
+exports.restaurarCultivo = exports.cancelarEditarCultivo = exports.eliminarCultivo = exports.editarCultivo = exports.agregarCultivo = exports.buscarCultivo = exports.listarCultivos = exports.listaCultivoApi = void 0;
 const cultivos_dta_1 = require("../../data_access/cultivos_dta");
+const listaCultivoApi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { body } = req;
+    // tslint:disable-next-line:no-console
+    const datos = yield (0, cultivos_dta_1.getCultivos)();
+    res.status(200).json({
+        datos
+    });
+});
+exports.listaCultivoApi = listaCultivoApi;
 const listarCultivos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const cultivos = yield (0, cultivos_dta_1.getCultivos)();
     res.render('crops', { cultivos });

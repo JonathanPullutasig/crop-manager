@@ -1,5 +1,17 @@
 import { Request, Response } from "express";
 import { deleteCultivo, getCultivo, getCultivos, postCultivo, putCultivo, restoreCultivo, searchCultivo } from "../../data_access/cultivos_dta";
+import {getArea} from "../validations/parameters";
+import {postCampo} from "../../data_access/campos_dta";
+
+export const listaCultivoApi = async (req: Request, res: Response) => {
+    const { body } = req;
+    // tslint:disable-next-line:no-console
+    const datos = await getCultivos()
+    res.status(200).json({
+        datos
+    })
+}
+
 
 export const listarCultivos = async (req: Request, res: Response) => {
     const cultivos = await getCultivos();
