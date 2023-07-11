@@ -14,7 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCampo = exports.putCampo = exports.postCampo = exports.getCampo = exports.getCampos = void 0;
 const campo_1 = __importDefault(require("../models/campo"));
-const getCampos = () => __awaiter(void 0, void 0, void 0, function* () {
+const getCampos = (datos) => __awaiter(void 0, void 0, void 0, function* () {
+    // tslint:disable-next-line:no-console
+    console.log(datos);
     const campos = yield campo_1.default.findAll();
     return campos;
 });
@@ -36,6 +38,7 @@ const postCampo = (req) => __awaiter(void 0, void 0, void 0, function* () {
         estado: body.estado,
         descripcion: body.descripcion,
         area: body.area,
+        coordenadas: body.posiciones
     });
     yield campo.save();
 });

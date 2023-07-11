@@ -20,6 +20,9 @@ const Campo = connect_1.default.define('campos', {
     },
     activo: {
         type: sequelize_1.DataTypes.BOOLEAN
+    },
+    coordenadas: {
+        type: sequelize_1.DataTypes.TEXT
     }
 });
 exports.default = Campo;

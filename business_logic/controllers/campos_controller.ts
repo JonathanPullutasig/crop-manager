@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import { deleteCampo, getCampo, getCampos, postCampo, putCampo } from "../../data_access/campos_dta";
 import { getArea } from "../validations/parameters";
 
-export const listarCampos = async (req: Request, res: Response) => {
-    const campos = await getCampos();
+export const listarCampos = async (req: Request, res: Response) =>
+{
+    const campos = await getCampos(req.body);
     res.json(campos);
 }
 
@@ -19,6 +20,9 @@ export const buscarCampo = async (req: Request, res: Response) => {
 
 export const agregarCampo = async (req: Request, res: Response) => {
     const { body } = req;
+    // tslint:disable-next-line:no-console
+    console.log(req.body)
+
     if (body.area >= getArea()){
         await postCampo(req);
         res.status(200).json({ message: 'Campo agregado correctamente' });

@@ -1,7 +1,9 @@
 import { Request } from "express";
 import Campo from "../models/campo";
 
-export const getCampos = async () => {
+export const getCampos = async (datos:any) => {
+    // tslint:disable-next-line:no-console
+    console.log(datos)
     const campos = await Campo.findAll();
     return campos;
 }
@@ -22,6 +24,7 @@ export const postCampo = async (req: Request) => {
         estado: body.estado,
         descripcion: body.descripcion,
         area: body.area,
+        coordenadas:body.posiciones
     })
     await campo.save();
 }

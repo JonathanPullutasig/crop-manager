@@ -13,7 +13,7 @@ exports.mostrarTrazado = exports.eliminarCampo = exports.editarCampo = exports.a
 const campos_dta_1 = require("../../data_access/campos_dta");
 const parameters_1 = require("../validations/parameters");
 const listarCampos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const campos = yield (0, campos_dta_1.getCampos)();
+    const campos = yield (0, campos_dta_1.getCampos)(req.body);
     res.json(campos);
 });
 exports.listarCampos = listarCampos;
@@ -30,6 +30,8 @@ const buscarCampo = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.buscarCampo = buscarCampo;
 const agregarCampo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
+    // tslint:disable-next-line:no-console
+    console.log(req.body);
     if (body.area >= (0, parameters_1.getArea)()) {
         yield (0, campos_dta_1.postCampo)(req);
         res.status(200).json({ message: 'Campo agregado correctamente' });

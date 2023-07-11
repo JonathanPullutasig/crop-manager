@@ -16,6 +16,9 @@ const Campo = db.define('campos',{
     },
     activo:{
         type:DataTypes.BOOLEAN
+    },
+    coordenadas:{
+        type:DataTypes.TEXT
     }
 });
 

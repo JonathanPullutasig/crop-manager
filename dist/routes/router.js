@@ -51,7 +51,7 @@ router.get('/cultivos/delete/:id', cultivos_controller_1.eliminarCultivo);
 router.get('/cancelEditCultivo', cultivos_controller_1.cancelarEditarCultivo);
 router.get('/cultivos/restore/:id', cultivos_controller_1.restaurarCultivo);
 //Rutas para campos
-router.get('/campos', campos_controller_1.listarCampos);
+router.post('/campos', campos_controller_1.listarCampos);
 router.get('/campos/:id', campos_controller_1.buscarCampo);
 router.post('/campos/add', campos_controller_1.agregarCampo);
 router.put('/campos/edit/:id', campos_controller_1.editarCampo);

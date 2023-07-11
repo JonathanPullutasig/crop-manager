@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!-- AIzaSyBxHLrR15oQTeiQFRndW9Y6YacYsVFHcR0 -->
 <html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
   data-template="vertical-menu-template-free">
 
@@ -51,6 +51,11 @@
   <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
   <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
   <script src="/assets/js/config.js"></script>
+
+  <script async
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBxHLrR15oQTeiQFRndW9Y6YacYsVFHcR0&libraries=drawing&callback=initMap">
+  </script>
+
   <style>
     #map {
       height: 100%;
@@ -69,7 +74,194 @@
   
 </head>
 
+<style>
+  #map {
+    height: 100%;
+    width: 100%;
+  }
+
+
+  .gm-style-cc{
+    display: none !important;
+  }
+
+
+</style>
+
 <body>
+
+  <script>
+  let oMapaGoogle;
+  let oDrawingManager;
+  let mListaCampo = []
+  let oContainerAddCampo
+  let oPolygon = null
+
+  let mListaPolygons = []
+
+  function readPolygons()
+  {
+    // Construct the polygon.
+    let bermudaTriangle = new google.maps.Polygon({
+      paths: mListaCampo,
+      fillColor: "#ffff00",
+      fillOpacity: 0.10,
+      strokeWeight: 2,
+    });
+
+    bermudaTriangle.setMap(oMapaGoogle)
+
+
+
+
+    //mListaPolygons.push(bermudaTriangle)
+  }
+
+  async function initMap() {
+    //@ts-ignore
+
+    oMapaGoogle = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: -1.647467, lng: -78.673955 },
+      zoom: 15,
+      mapTypeId: 'hybrid',
+      zoomControl:false,
+      fullscreenControl:false,
+      streetViewControl:false,
+      mapTypeControl:false
+    })
+
+
+
+
+
+    /***** POLIGONOS POR DEFECTO ****/
+            // Define the LatLng coordinates for the polygon's path.
+
+
+    /*********/
+    oDrawingManager = new google.maps.drawing.DrawingManager({
+      drawingControlOptions: {
+        position: google.maps.ControlPosition.TOP_CENTER,
+        drawingModes: [
+          google.maps.drawing.OverlayType.POLYGON,
+        ]
+      },
+      polygonOptions: {
+        fillColor: "#ffff00",
+        fillOpacity: 0.10,
+        strokeWeight: 5,
+        clickable: false,
+        editable: true,
+        zIndex: 1,
+      },
+    });
+
+    oDrawingManager.setMap(oMapaGoogle)
+
+    google.maps.event.addListener(oDrawingManager, 'polygoncomplete', function(poligono)
+    {
+      mListaCampo = []
+
+      console.log("***************************")
+      var lista = poligono.getPath().getArray()
+
+      for(var i = 0;i<lista.length;i++)
+      {
+        var obj = {lat:lista[i].lat(),lng:lista[i].lng()}
+        console.log(obj)
+        mListaCampo.push(obj)
+      }
+
+      if(mListaCampo.length > 0)
+      {
+        oPolygon = poligono
+        oContainerAddCampo = document.getElementById("ContainerAddCampo");
+        oContainerAddCampo.classList.remove("hideContainer");
+      }
+
+    })
+
+    readAllCamposApi()
+
+  }
+
+  initMap()
+
+
+  function saveCampo()
+  {
+    let oIdtxtDetalle = document.getElementById("idtxtDetalle")
+    let oIdtxtArea = document.getElementById("idtxtArea")
+    let StringCoordenadas = ""
+
+    for (var i = 0;i<mListaCampo.length;i++)
+    {
+      if(mListaCampo.length - 1 === i){
+        StringCoordenadas = StringCoordenadas+mListaCampo[i].lat+","+mListaCampo[i].lng
+      }else{
+        StringCoordenadas = StringCoordenadas+mListaCampo[i].lat+","+mListaCampo[i].lng+";"
+      }
+    }
+
+
+    var objCampo = {
+      encargado:1,
+      estado:1,
+      descripcion: oIdtxtDetalle.value,
+      area:  oIdtxtArea.value,
+      posiciones: StringCoordenadas
+    }
+    console.log("++++++++++++++++++++++++++++++++++++++++++")
+    console.log(objCampo)
+    console.log("++++++++++++++++++++++++++++++++++++++++++")
+
+
+
+    $.ajax({
+      url: 'http://localhost:8000/campos/add',
+      method: 'POST',
+      dataType: 'json',
+      data: {
+        // Aquí puedes pasar los datos que deseas enviar en el cuerpo de la solicitud
+        encargado: 1,
+        estado: 1,
+        descripcion: objCampo.descripcion,
+        area: parseInt(objCampo.area),
+        posiciones: objCampo.posiciones
+      },
+      success: function(response) {
+        // La respuesta exitosa de la API
+        console.log(response);
+
+        oContainerAddCampo.classList.add("hideContainer")
+
+        oIdtxtDetalle.value = ""
+        oIdtxtArea.value = ""
+
+        //oDrawingManager.setMap(null);
+
+        oPolygon.setMap(null)
+
+        readAllCamposApi()
+
+
+      },
+      error: function(xhr, status, error) {
+        // Ocurrió un error al hacer la solicitud
+        console.error(error);
+      }
+    });
+
+
+
+
+  }
+
+
+
+
+</script>
+
   <!-- Layout -->
   <div class="layout-wrapper layout-content-navbar">
     <div class="layout-container">
@@ -337,51 +529,40 @@
 
         <!-- Contenido del Dashboard -->
         <div class="content-wrapper">
-          <div class="container-xxl flex-grow-1 container-p-y">
+          <div id="map"></div>
 
 
-            <!-- <h1>trazado </h1> -->
+          <div id="ContainerAddCampo" class="container_datos hideContainer" >
 
-            <!-- <select name="select_location" id="selecc_location">
-              <option value="-1">Seleccione un lugar</option>
-              <option value="-1.2541657322081436, -78.62289198197807">Ambato</option>
-              <option value="-1.6571895833887418, -78.67947977837109">Riobamba</option>
-            </select> -->
-
-
-
-
-            <div class="contenedor">
-              <button class="btn" type="submit" id="lanzar-modal">LANZghfghfgAR MODAL</button>
-            </div>
-            <div class="cmodal">
-              <div class="mo">
-                <h1>Datos de la parcela</h1>
-                <form action="">
-                  <input type="text" placeholder="introduce la finca ">
-                  <input type="text" placeholder="introduce la parcela">
-                  <button class="btn" type="submit" id="ocultar-modal">Finalizar</button>
-                </form>
+            <div class="mb-3">
+              <label class="form-label" for="basic-icon-default-fullname">AREA</label>
+              <div class="input-group input-group-merge">
+                                                    <span id="basic-icon-default-fullname2" class="input-group-text"><i
+                                                              class="bx bx-pencil"></i></span>
+                <input type="text" class="form-control"
+                       id="idtxtArea" placeholder="Nombre del cultivo"
+                       name="nombre"
+                       aria-describedby="basic-icon-default-fullname2" required/>
               </div>
             </div>
+            <div class="mb-3">
+              <label class="form-label"
+                     for="basic-icon-default-message">DETALLE</label>
+              <div class="input-group input-group-merge">
+                                                    <span id="basic-icon-default-message2" class="input-group-text"><i
+                                                              class="bx bx-detail"></i></span>
+                <textarea id="idtxtDetalle" class="form-control"
+                          placeholder="Describa el cultivo"
+                          name="descripcion"
+                          aria-describedby="basic-icon-default-message2"></textarea>
+              </div>
+            </div>
+            <button id="btnSaveCampo" class="btn btn-primary">
+              <span class="tf-icons bx bx-plus-circle"></span> Agregar</button>
 
-            <div id="map"></div>
           </div>
-          <script>
-            let map;
 
-            async function initMap() {
-              //@ts-ignore
-              const { Map } = await google.maps.importLibrary("maps");
 
-              map = new Map(document.getElementById("map"), {
-                center: { lat: -34.397, lng: 150.644 },
-                zoom: 8,
-              });
-            }
-
-            initMap();
-          </script>
 
         </div>
 
@@ -434,13 +615,93 @@
 
   <!-- Place this tag in your head or just before your close body tag. -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
   <script>
-    (g => { var h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window; b = b[c] || (b[c] = {}); var d = b.maps || (b.maps = {}), r = new Set, e = new URLSearchParams, u = () => h || (h = new Promise(async (f, n) => { await (a = m.createElement("script")); e.set("libraries", [...r] + ""); for (k in g) e.set(k.replace(/[A-Z]/g, t => "_" + t[0].toLowerCase()), g[k]); e.set("callback", c + ".maps." + q); a.src = `https://maps.${c}apis.com/maps/api/js?` + e; d[q] = f; a.onerror = () => h = n(Error(p + " could not load.")); a.nonce = m.querySelector("script[nonce]")?.nonce || ""; m.head.append(a) })); d[l] ? console.warn(p + " only loads once. Ignoring:", g) : d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)) })({
-      key: "AIzaSyBxHLrR15oQTeiQFRndW9Y6YacYsVFHcR0",
-      // Add other bootstrap parameters as needed, using camel case.
-      // Use the 'v' parameter to indicate the version to load (alpha, beta, weekly, etc.)
-    });
+    let oBtnSaveCampo = document.getElementById("btnSaveCampo");
+
+    oBtnSaveCampo.onclick = function() {
+      // Aquí va el código que se ejecutará cuando se haga clic en el botón
+      saveCampo()
+    };
+
+
+    function readAllCamposApi()
+    {
+      $.ajax({
+        url: 'http://localhost:8000/campos',
+        method: 'POST',
+        dataType: 'json',
+        success: function(response) {
+          // La respuesta exitosa de la API
+          console.log(response);
+          if(response.length > 0)
+          {
+            for (var i = 0;i<response.length;i++)
+            {
+              //console.log(response[i].coordenadas)
+              var list = response[i].coordenadas.split(';')
+              var listaPol = []
+              for (var j = 0;j<list.length;j++)
+              {
+                var lista2 = list[j].split(',')
+                var obj = {lat:parseFloat(lista2[0]),lng:parseFloat(lista2[1])}
+                console.log(obj)
+                listaPol.push(obj)
+              }
+
+              if(listaPol.length > 0)
+              {
+                var bermudaTriangle = new google.maps.Polygon({
+                  paths: listaPol,
+                  strokeColor: "#FF0000",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "#FF0000",
+                  fillOpacity: 0.2,
+                });
+                bermudaTriangle.setMap(oMapaGoogle);
+              }
+
+            }
+          }
+
+        },
+        error: function(xhr, status, error) {
+          // Ocurrió un error al hacer la solicitud
+          console.error(error);
+        }
+      });
+    }
+
+
+
   </script>
+
+  <style>
+
+    .container_datos{
+      width: 15rem;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      margin-right: 1rem;
+      border-style: solid;
+      border-width: 0;
+      border-radius: 10px;
+      background-color: white;
+      position: absolute;
+      right: 0;
+      z-index: 99999;
+    }
+
+    .hideContainer{
+      display: none;
+    }
+
+  </style>
+
+
+
 </body>
 
 </html>

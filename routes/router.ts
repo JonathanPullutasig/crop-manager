@@ -55,11 +55,12 @@ router.get('/cultivos/:id', buscarCultivo);
 router.post('/cultivos/add', agregarCultivo);
 router.post('/cultivos/edit/:id', editarCultivo);
 router.get('/cultivos/delete/:id', eliminarCultivo);
+
 router.get('/cancelEditCultivo', cancelarEditarCultivo);
 router.get('/cultivos/restore/:id', restaurarCultivo);
 
 //Rutas para campos
-router.get('/campos', listarCampos);
+router.post('/campos', listarCampos);
 router.get('/campos/:id', buscarCampo);
 router.post('/campos/add', agregarCampo);
 router.put('/campos/edit/:id', editarCampo);
